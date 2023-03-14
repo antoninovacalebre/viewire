@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://msa4vwnwatai"]
+
+[ext_resource type="Script" path="res://Draw3D.gd" id="1_jbh8y"]
+[ext_resource type="Script" path="res://camera.gd" id="1_wxo4s"]
+
+[node name="Node" type="Node"]
+script = ExtResource("1_jbh8y")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.19652)
+script = ExtResource("1_wxo4s")
