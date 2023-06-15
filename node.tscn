@@ -9,6 +9,7 @@ point_size = 0.005
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
+projection = 1
 size = 3.0
 script = ExtResource("2_qsqqm")
 
@@ -43,7 +44,7 @@ offset_bottom = 289.5
 grow_horizontal = 2
 grow_vertical = 2
 text = "Antonino Vacalebre - EMCLab
-0.1.2
+0.1.3
 
 --- GENERAL ---
 CTRL+O - Open File

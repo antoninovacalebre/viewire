@@ -34,6 +34,15 @@ func _input(event: InputEvent) -> void:
 		
 	if event.is_action_pressed("Reset Camera"):
 		_center_camera()
+		
+	if event.is_action_pressed("Toggle Orthographic"):
+		_toggle_orthographic()
+		
+func _toggle_orthographic()->void:
+	if $Camera3D.get_projection() != $Camera3D.PROJECTION_ORTHOGONAL:
+		$Camera3D.set_orthogonal(3, 0.05, 4000)
+	else:
+		$Camera3D.set_perspective(75, 0.05, 4000)
 
 func _clear_points_and_lines()->void:
 	for p in points:
