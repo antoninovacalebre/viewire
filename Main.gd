@@ -20,7 +20,6 @@ func _ready() -> void:
 	colors.append(Color.LIGHT_STEEL_BLUE)
 	colors.append(Color.LIGHT_SLATE_GRAY)
 	
-	
 func _input(event: InputEvent) -> void:
 	
 	if event.is_action_pressed("Clear"):
@@ -37,13 +36,17 @@ func _input(event: InputEvent) -> void:
 		
 	if event.is_action_pressed("Toggle Orthographic"):
 		_toggle_orthographic()
+		_center_camera()
 		
 func _toggle_orthographic()->void:
 	if $Camera3D.get_projection() != $Camera3D.PROJECTION_ORTHOGONAL:
-		$Camera3D.set_orthogonal(3, 0.05, 4000)
+		$Camera3D.set_orthogonal(50, 0.05, 4000)
 	else:
 		$Camera3D.set_perspective(75, 0.05, 4000)
-
+		
+func _set_orthogonal()->void:
+	$Camera3D.set_orthogonal(50, 0.05, 4000)
+	
 func _clear_points_and_lines()->void:
 	for p in points:
 		p.queue_free()
@@ -59,13 +62,30 @@ func _popup_file_dialog() -> void:
 	$FileDialog.popup()
 	
 func _center_camera():
+	_set_orthogonal()
+	
 	var center = Vector2(0.0, 0.0)
+	
+	var max_x = -1e9
+	var min_x = 1e9
+	var max_y = -1e9
+	var min_y = 1e9
+	
 	for point in points:
 		center.x += point.position.x
 		center.y += point.position.y
+		
+		max_x = max(max_x, point.position.x)
+		min_x = min(min_x, point.position.x)
+		
+		max_y = max(max_y, point.position.y)
+		min_y = min(min_y, point.position.y)
+		
 	center /= len(points)
 	
 	$Camera3D.transform = Transform3D(Vector3.RIGHT, Vector3.UP, Vector3.BACK, Vector3(center.x, center.y, 40.0))
+	if $Camera3D.get_projection() == $Camera3D.PROJECTION_ORTHOGONAL:
+		$Camera3D._size = 1.2 * max(1, max_x-min_x, max_y-min_y)
 
 func _on_file_dialog_file_selected(path):
 	var nlines = 0

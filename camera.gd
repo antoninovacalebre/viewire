@@ -15,7 +15,7 @@ var _direction = Vector3(0.0, 0.0, 0.0)
 var _velocity = Vector3(0.0, 0.0, 0.0)
 var _acceleration = 30
 var _deceleration = -10
-var _vel_multiplier = 4
+var _vel_multiplier = 10
 var _roll_velocity = 40
 var _size = 10
 
@@ -39,20 +39,20 @@ func _input(event):
 	# Receives mouse button input
 	if event is InputEventMouseButton:
 		match event.button_index:
-			MOUSE_BUTTON_RIGHT: # Only allows rotation if right click down
+			MOUSE_BUTTON_LEFT: # Only allows rotation if left click down
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED if event.pressed else Input.MOUSE_MODE_VISIBLE)
 			MOUSE_BUTTON_WHEEL_UP: 
 				_size = clamp(_size / 1.1, 0.1, 1000)
 			MOUSE_BUTTON_WHEEL_DOWN: 
 				_size = clamp(_size * 1.1, 0.1, 1000)
-
+				
 	# Receives key input
 	if event is InputEventKey:
 		match event.keycode:
 			KEY_W:
-				_w = event.pressed
+				_w = event.pressed if self.projection != PROJECTION_ORTHOGONAL else false
 			KEY_S:
-				_s = event.pressed
+				_s = event.pressed if self.projection != PROJECTION_ORTHOGONAL else false
 			KEY_A:
 				_a = event.pressed
 			KEY_D:
@@ -125,6 +125,5 @@ func _update_mouselook():
 		#pitch = clamp(pitch, -90 - _total_pitch, 90 - _total_pitch)
 		_total_pitch += pitch
 	
-		#rotate_y(deg_to_rad(-yaw))
 		rotate_object_local(Vector3(0,1,0), deg_to_rad(-yaw))
 		rotate_object_local(Vector3(1,0,0), deg_to_rad(-pitch))

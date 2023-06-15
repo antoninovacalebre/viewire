@@ -10,7 +10,7 @@ point_size = 0.005
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
 projection = 1
-size = 3.0
+size = 10.0
 script = ExtResource("2_qsqqm")
 
 [node name="FileDialog" type="FileDialog" parent="."]
