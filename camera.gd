@@ -16,6 +16,8 @@ var _velocity = Vector3(0.0, 0.0, 0.0)
 var _acceleration = 30
 var _deceleration = -10
 var _vel_multiplier = 4
+var _roll_velocity = 40
+var _size = 10
 
 # Keyboard state
 var _w = false
@@ -24,6 +26,8 @@ var _a = false
 var _d = false
 var _q = false
 var _e = false
+var _z = false
+var _x = false
 var _shift = false
 var _alt = false
 
@@ -37,6 +41,10 @@ func _input(event):
 		match event.button_index:
 			MOUSE_BUTTON_RIGHT: # Only allows rotation if right click down
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED if event.pressed else Input.MOUSE_MODE_VISIBLE)
+			#MOUSE_BUTTON_WHEEL_UP: # Increases max velocity
+			#	_size = clamp(_size * 1.1, 0.2, 200)
+			#MOUSE_BUTTON_WHEEL_DOWN: # Decereases max velocity
+			#	_size = clamp(_size / 1.1, 0.2, 200)
 			MOUSE_BUTTON_WHEEL_UP: # Increases max velocity
 				_vel_multiplier = clamp(_vel_multiplier * 1.1, 0.2, 20)
 			MOUSE_BUTTON_WHEEL_DOWN: # Decereases max velocity
@@ -57,6 +65,10 @@ func _input(event):
 				_q = event.pressed
 			KEY_E:
 				_e = event.pressed
+			KEY_Z:
+				_z = event.pressed
+			KEY_X:
+				_x = event.pressed
 
 # Updates mouselook and movement every frame
 func _process(delta):
@@ -74,11 +86,17 @@ func _update_movement(delta):
 	# The "drag" is a constant acceleration on the camera to bring it's velocity to 0
 	var offset = _direction.normalized() * _acceleration * _vel_multiplier * delta \
 		+ _velocity.normalized() * _deceleration * _vel_multiplier * delta
+		
+	var roll_dir = (_x as float) - (_z as float)
+	var roll = _roll_velocity * roll_dir * delta
+	rotate_object_local(Vector3(0,0,1), deg_to_rad(-roll))
 	
 	# Compute modifiers' speed multiplier
 	var speed_multi = 1
 	if _shift: speed_multi *= SHIFT_MULTIPLIER
 	if _alt: speed_multi *= ALT_MULTIPLIER
+	
+	size = _size
 	
 	# Checks if we should bother translating the camera
 	if _direction == Vector3.ZERO and offset.length_squared() > _velocity.length_squared():
@@ -99,11 +117,13 @@ func _update_mouselook():
 		_mouse_position *= sensitivity
 		var yaw = _mouse_position.x
 		var pitch = _mouse_position.y
+		
 		_mouse_position = Vector2(0, 0)
 		
 		# Prevents looking up/down too far
-		pitch = clamp(pitch, -90 - _total_pitch, 90 - _total_pitch)
+		#pitch = clamp(pitch, -90 - _total_pitch, 90 - _total_pitch)
 		_total_pitch += pitch
 	
-		rotate_y(deg_to_rad(-yaw))
+		#rotate_y(deg_to_rad(-yaw))
+		rotate_object_local(Vector3(0,1,0), deg_to_rad(-yaw))
 		rotate_object_local(Vector3(1,0,0), deg_to_rad(-pitch))

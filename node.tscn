@@ -1,11 +1,89 @@
-[gd_scene load_steps=3 format=3 uid="uid://msa4vwnwatai"]
+[gd_scene load_steps=3 format=3 uid="uid://cfq0roiyjxca4"]
 
-[ext_resource type="Script" path="res://node.gd" id="1_d68x8"]
-[ext_resource type="Script" path="res://camera.gd" id="1_wxo4s"]
+[ext_resource type="Script" path="res://main.gd" id="1_vu5w7"]
+[ext_resource type="Script" path="res://camera.gd" id="2_qsqqm"]
 
 [node name="Node" type="Node"]
-script = ExtResource("1_d68x8")
+script = ExtResource("1_vu5w7")
+point_size = 0.005
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.19652)
-script = ExtResource("1_wxo4s")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
+size = 3.0
+script = ExtResource("2_qsqqm")
+
+[node name="FileDialog" type="FileDialog" parent="."]
+title = "Open File"
+position = Vector2i(20, 37)
+size = Vector2i(800, 600)
+ok_button_text = "Open"
+mode_overrides_title = false
+file_mode = 0
+access = 2
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextEdit" type="TextEdit" parent="Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -171.0
+offset_top = -289.5
+offset_right = 171.0
+offset_bottom = 289.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Antonino Vacalebre - EMCLab
+0.1.2
+
+--- GENERAL ---
+CTRL+O - Open File
+CTRL+R - Clear View
+H - Toggle Help
+
+--- CAMERA ---
+Mouse+LMB - Pitch/Yaw
+W - Forward
+S - Backward
+A - Left
+D - Right
+E - Up
+Q - Down
+Z - Roll+
+X - Roll-
+R - Reset Camera View"
+placeholder_text = "CONTROLS:
+
+CTRL+O - Open File
+CTRL+R - Clear View
+H - Toggle Help
+
+CAMERA CONTROLS:
+
+Mouse+LMB - Pitch/Yaw
+W - Forward
+S - Backward
+A - Left
+D - Right
+Z - Roll+
+X - Roll-
+R - Reset Camera View"
+editable = false
+context_menu_enabled = false
+shortcut_keys_enabled = false
+selecting_enabled = false
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+virtual_keyboard_enabled = false
+middle_mouse_paste_enabled = false
+
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
