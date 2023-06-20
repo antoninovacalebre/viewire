@@ -1,17 +1,11 @@
 [gd_scene load_steps=3 format=3 uid="uid://cfq0roiyjxca4"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_vu5w7"]
-[ext_resource type="Script" path="res://camera.gd" id="2_qsqqm"]
+[ext_resource type="Script" path="res://addons/CADLikeOrbit_Camera/CADLikeOrbit_Camera.gd" id="2_5ntkk"]
 
 [node name="Node" type="Node"]
 script = ExtResource("1_vu5w7")
 point_size = 0.005
-
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
-projection = 1
-size = 10.0
-script = ExtResource("2_qsqqm")
 
 [node name="FileDialog" type="FileDialog" parent="."]
 title = "Open File"
@@ -19,7 +13,7 @@ position = Vector2i(20, 37)
 size = Vector2i(800, 600)
 ok_button_text = "Open"
 mode_overrides_title = false
-file_mode = 0
+file_mode = 1
 access = 2
 
 [node name="Control" type="Control" parent="."]
@@ -43,24 +37,19 @@ offset_right = 171.0
 offset_bottom = 289.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "Antonino Vacalebre - EMCLab
-0.1.3
+text = "viewire 0.2.0
+Antonino Vacalebre - EMCLab
+vacalebre.antonino@spes.uniud.it
 
 --- GENERAL ---
 CTRL+O - Open File
-CTRL+R - Clear View
+CTRL+R - Close All Files
 H - Toggle Help
 
 --- CAMERA ---
-Mouse+LMB - Pitch/Yaw
-W - Forward
-S - Backward
-A - Left
-D - Right
-E - Up
-Q - Down
-Z - Roll+
-X - Roll-
+Left Mouse Button - Rotate Camera
+Right Mouse Button - Pan Camera
+Middle Mouse Button - Zoom Camera
 R - Reset Camera View"
 placeholder_text = "CONTROLS:
 
@@ -87,4 +76,14 @@ drag_and_drop_selection_enabled = false
 virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 
-[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[node name="Camera" type="Camera3D" parent="."]
+fov = 45.0
+script = ExtResource("2_5ntkk")
+ZOOMSPEED = 0.07
+DEFAULTPANDIST = 20
+USEFOCALPOINTSPHERE = false
+FocalPointSphereRadius = 0.01
+IfNoObjPickedRotateAroundOrigin = true
+RotateUsingZoomPlusPan = false
+
+[connection signal="files_selected" from="FileDialog" to="." method="_on_file_dialog_files_selected"]

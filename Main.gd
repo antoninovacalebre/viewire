@@ -3,6 +3,8 @@ extends Node
 var points:Array
 var lines:Array
 
+var current_paths:Array
+
 var mouse_line: MeshInstance3D
 
 var colors:Array
@@ -34,18 +36,10 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("Reset Camera"):
 		_center_camera()
 		
-	if event.is_action_pressed("Toggle Orthographic"):
-		_toggle_orthographic()
-		_center_camera()
-		
-func _toggle_orthographic()->void:
-	if $Camera3D.get_projection() != $Camera3D.PROJECTION_ORTHOGONAL:
-		$Camera3D.set_orthogonal(50, 0.05, 4000)
-	else:
-		$Camera3D.set_perspective(75, 0.05, 4000)
-		
-func _set_orthogonal()->void:
-	$Camera3D.set_orthogonal(50, 0.05, 4000)
+	if event.is_action_pressed("Reload"):
+		var paths = [] + current_paths
+		_clear_points_and_lines()
+		_on_file_dialog_files_selected(paths)
 	
 func _clear_points_and_lines()->void:
 	for p in points:
@@ -57,12 +51,13 @@ func _clear_points_and_lines()->void:
 	lines.clear()
 	
 	files_counter = 0
+	current_paths.clear()
+	
 	
 func _popup_file_dialog() -> void:
 	$FileDialog.popup()
 	
 func _center_camera():
-	_set_orthogonal()
 	
 	var center = Vector2(0.0, 0.0)
 	
@@ -83,64 +78,67 @@ func _center_camera():
 		
 	center /= len(points)
 	
-	$Camera3D.transform = Transform3D(Vector3.RIGHT, Vector3.UP, Vector3.BACK, Vector3(center.x, center.y, 40.0))
-	if $Camera3D.get_projection() == $Camera3D.PROJECTION_ORTHOGONAL:
-		$Camera3D._size = 1.2 * max(1, max_x-min_x, max_y-min_y)
+	var distance = 2 * max(max_x-min_x, max_y-min_y) * 0.5 / tan(deg_to_rad($Camera.fov/2))
+	
+	$Camera.transform = Transform3D(Vector3.RIGHT, Vector3.UP, Vector3.BACK, Vector3(center.x, center.y, distance))
 
-func _on_file_dialog_file_selected(path):
-	var nlines = 0
-	
-	var file = FileAccess.open(path, FileAccess.READ)
-	
-	# Parsing
-	
-	var nwires = int(file.get_line())
-	
-	for j in nwires:
-		var line = file.get_line()
-		line = line.replace("\t", " ")
-		line = line.split(" ", false)
+func _on_file_dialog_files_selected(paths):
+	for path in paths:
+		current_paths.append(path)
 		
-		if len(line) <= 2:
-			nlines = int(line[0])
-		else:
-			line = file.get_line()
-			line = line.replace("\t", " ")
-			line = line.split(" ", false)
-			nlines = int(line[0])
-			
-		var first_point = len(points)
+		var nlines = 0
 		
-		for ii in nlines:
-			var i = first_point + ii
-			line = file.get_line()
+		var file = FileAccess.open(path, FileAccess.READ)
+		
+		# Parsing
+		
+		var nwires = int(file.get_line())
+		
+		for j in nwires:
+			var line = file.get_line()
 			line = line.replace("\t", " ")
 			line = line.split(" ", false)
 			
-			var pv3 = Vector3(float(line[0]), float(line[1]), float(line[2]))
-			points.append(Draw3d.point(pv3, point_size))
+			if len(line) <= 2:
+				nlines = int(line[0])
+			else:
+				line = file.get_line()
+				line = line.replace("\t", " ")
+				line = line.split(" ", false)
+				nlines = int(line[0])
+				
+			var first_point = len(points)
 			
-			if ii > 0:
-				var p1 = points[i].position
-				var p2 = points[i-1].position
+			for ii in nlines:
+				var i = first_point + ii
+				line = file.get_line()
+				line = line.replace("\t", " ")
+				line = line.split(" ", false)
 				
-				var is_via = abs(p1.z - p2.z) > 1e-9
-				var same_xy = Vector2(p1.x, p1.y).distance_to(Vector2(p2.x, p2.y)) < 1e-9
+				var pv3 = Vector3(float(line[0]), float(line[1]), float(line[2]))
+				points.append(Draw3d.point(pv3, point_size))
 				
-				if  is_via and !same_xy:
-					lines.append(Draw3d.line(p1, p2, Color.RED))
-				else:
-					lines.append(Draw3d.line(p1, p2, colors[files_counter]))
+				if ii > 0:
+					var p1 = points[i].position
+					var p2 = points[i-1].position
 					
-				if ii == (nlines-1):
-					var same_as_first = Vector2(p1.x, p1.y).distance_to(Vector2(points[first_point].position.x, points[first_point].position.y)) < 1e-9
+					var is_via = abs(p1.z - p2.z) > 1e-9
+					var same_xy = Vector2(p1.x, p1.y).distance_to(Vector2(p2.x, p2.y)) < 1e-9
 					
-					if !same_as_first:
-						lines.append(Draw3d.line(points[i].position, points[first_point].position, Color.FUCHSIA))
-				
-	$Control/TextEdit.visible = false
-	
-	if files_counter == 0:
-		_center_camera()
-	
-	files_counter += 1
+					if  is_via and !same_xy:
+						lines.append(Draw3d.line(p1, p2, Color.RED))
+					else:
+						lines.append(Draw3d.line(p1, p2, colors[files_counter]))
+						
+					if ii == (nlines-1):
+						var same_as_first = Vector2(p1.x, p1.y).distance_to(Vector2(points[first_point].position.x, points[first_point].position.y)) < 1e-9
+						
+						if !same_as_first:
+							lines.append(Draw3d.line(points[i].position, points[first_point].position, Color.FUCHSIA))
+					
+		$Control/TextEdit.visible = false
+		
+		if files_counter == 0:
+			_center_camera()
+		
+		files_counter += 1
