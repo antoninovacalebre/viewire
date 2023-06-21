@@ -10,11 +10,13 @@ var mouse_line: MeshInstance3D
 var colors:Array
 
 var files_counter := 0
+var reloading := false
 
 @export var default_camera_pos :Vector3= Vector3(0.0, 0.0, 40.0)
 @export var point_size := 0.025
 
 func _ready() -> void:
+	reloading = false
 	colors.append(Color.LIGHT_GREEN)
 	colors.append(Color.LIGHT_CORAL)
 	colors.append(Color.LIGHT_CYAN)
@@ -33,13 +35,14 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("Toggle Help"):
 		$Control/TextEdit.visible = not $Control/TextEdit.visible
 		
-	if event.is_action_pressed("Reset Camera"):
-		_center_camera()
-		
 	if event.is_action_pressed("Reload"):
+		reloading = true
 		var paths = [] + current_paths
 		_clear_points_and_lines()
 		_on_file_dialog_files_selected(paths)
+		reloading = false
+	elif event.is_action_pressed("Reset Camera"):
+		_center_camera() 
 	
 func _clear_points_and_lines()->void:
 	for p in points:
@@ -138,7 +141,7 @@ func _on_file_dialog_files_selected(paths):
 					
 		$Control/TextEdit.visible = false
 		
-		if files_counter == 0:
+		if files_counter == 0 and not reloading:
 			_center_camera()
 		
 		files_counter += 1
