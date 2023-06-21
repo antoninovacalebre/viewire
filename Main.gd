@@ -131,7 +131,7 @@ func _on_file_dialog_files_selected(paths):
 						lines.append(Draw3d.line(p1, p2, colors[files_counter]))
 						
 					if ii == (nlines-1):
-						var same_as_first = Vector2(p1.x, p1.y).distance_to(Vector2(points[first_point].position.x, points[first_point].position.y)) < 1e-9
+						var same_as_first = p1.distance_to(points[first_point].position) < 1e-9
 						
 						if !same_as_first:
 							lines.append(Draw3d.line(points[i].position, points[first_point].position, Color.FUCHSIA))

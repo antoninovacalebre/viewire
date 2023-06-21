@@ -37,13 +37,14 @@ offset_right = 171.0
 offset_bottom = 289.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "viewire 0.2.0
+text = "viewire 0.2.1
 Antonino Vacalebre - EMCLab
 vacalebre.antonino@spes.uniud.it
 
 --- GENERAL ---
-CTRL+O - Open File
-CTRL+R - Close All Files
+CTRL+O - Open File(s)
+CTRL+R - Reload All Files
+CTRL+K - Close All Files
 H - Toggle Help
 
 --- CAMERA ---
