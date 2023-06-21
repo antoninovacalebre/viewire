@@ -102,7 +102,7 @@ func _on_file_dialog_files_selected(paths):
 			line = line.replace("\t", " ")
 			line = line.split(" ", false)
 			
-			if len(line) <= 2:
+			if line[0].is_valid_int():
 				nlines = int(line[0])
 			else:
 				line = file.get_line()
