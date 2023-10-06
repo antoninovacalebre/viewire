@@ -11,9 +11,10 @@ var colors:Array
 
 var files_counter := 0
 var reloading := false
+var smallest_segment_length := INF
 
 @export var default_camera_pos :Vector3= Vector3(0.0, 0.0, 40.0)
-@export var point_size := 0.025
+@export var default_point_size := 0.025
 
 func _ready() -> void:
 	reloading = false
@@ -119,7 +120,7 @@ func _on_file_dialog_files_selected(paths):
 				line = line.split(" ", false)
 				
 				var pv3 = Vector3(float(line[0]), float(line[1]), float(line[2]))
-				points.append(Draw3d.point(pv3, point_size))
+				points.append(Draw3d.point(pv3, default_point_size))
 				
 				if ii > 0:
 					var p1 = points[i].position
@@ -132,16 +133,24 @@ func _on_file_dialog_files_selected(paths):
 						lines.append(Draw3d.line(p1, p2, Color.RED))
 					else:
 						lines.append(Draw3d.line(p1, p2, colors[files_counter]))
+					smallest_segment_length = min(smallest_segment_length, p1.distance_to(p2))
 						
 					if ii == (nlines-1):
 						var same_as_first = p1.distance_to(points[first_point].position) < 1e-9
 						
 						if !same_as_first:
 							lines.append(Draw3d.line(points[i].position, points[first_point].position, Color.FUCHSIA))
+							smallest_segment_length = min(smallest_segment_length, points[i].position.distance_to(points[first_point].position))
 					
 		$Control/TextEdit.visible = false
+		
+		_resize_points()
 		
 		if files_counter == 0 and not reloading:
 			_center_camera()
 		
 		files_counter += 1
+
+func _resize_points() -> void:
+	for point in points:
+		point.mesh.size = Vector3(1.0, 1.0, 1.0) * smallest_segment_length / 10.0

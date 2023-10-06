@@ -5,7 +5,6 @@
 
 [node name="Node" type="Node"]
 script = ExtResource("1_vu5w7")
-point_size = 0.005
 
 [node name="FileDialog" type="FileDialog" parent="."]
 title = "Open File"
@@ -37,7 +36,7 @@ offset_right = 171.0
 offset_bottom = 289.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "viewire 0.2.4
+text = "viewire 0.2.5
 Antonino Vacalebre - EMCLab
 vacalebre.antonino@spes.uniud.it
 
