@@ -133,7 +133,12 @@ func _on_file_dialog_files_selected(paths):
 						lines.append(Draw3d.line(p1, p2, Color.RED))
 					else:
 						lines.append(Draw3d.line(p1, p2, colors[files_counter]))
-					smallest_segment_length = min(smallest_segment_length, p1.distance_to(p2))
+					
+					var segment_length = p1.distance_to(p2)
+					if segment_length > 1e-12:
+						smallest_segment_length = min(smallest_segment_length, segment_length)
+					else:
+						print_debug("Found segment of size less than 1e-12")
 						
 					if ii == (nlines-1):
 						var same_as_first = p1.distance_to(points[first_point].position) < 1e-9
