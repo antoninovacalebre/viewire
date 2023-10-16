@@ -10,6 +10,7 @@ var mouse_line: MeshInstance3D
 var colors:Array
 
 var files_counter := 0
+var wires_counter := 0
 var reloading := false
 var smallest_segment_length := INF
 
@@ -18,12 +19,18 @@ var smallest_segment_length := INF
 
 func _ready() -> void:
 	reloading = false
-	colors.append(Color.LIGHT_GREEN)
-	colors.append(Color.LIGHT_CORAL)
-	colors.append(Color.LIGHT_CYAN)
-	colors.append(Color.LIGHT_GOLDENROD)
-	colors.append(Color.LIGHT_STEEL_BLUE)
-	colors.append(Color.LIGHT_SLATE_GRAY)
+	# color cycle is shamelessly copied from matplotlib
+	# https://matplotlib.org/stable/users/prev_whats_new/dflt_style_changes.html
+	colors.append(Color.hex(0x1f77b4ff))
+	colors.append(Color.hex(0xff7f0eff))
+	colors.append(Color.hex(0x2ca02cff))
+	colors.append(Color.hex(0xd62728ff))
+	colors.append(Color.hex(0x9467bdff))
+	colors.append(Color.hex(0x8c564bff))
+	colors.append(Color.hex(0xe377c2ff))
+	colors.append(Color.hex(0x7f7f7fff))
+	colors.append(Color.hex(0xbcbd22ff))
+	colors.append(Color.hex(0x17becfff))
 	
 func _input(event: InputEvent) -> void:
 	
@@ -55,6 +62,7 @@ func _clear_points_and_lines()->void:
 	lines.clear()
 	
 	files_counter = 0
+	wires_counter = 0
 	current_paths.clear()
 	
 	
@@ -132,7 +140,7 @@ func _on_file_dialog_files_selected(paths):
 					if  is_via and !same_xy:
 						lines.append(Draw3d.line(p1, p2, Color.RED))
 					else:
-						lines.append(Draw3d.line(p1, p2, colors[files_counter]))
+						lines.append(Draw3d.line(p1, p2, colors[wires_counter % len(colors)]))
 					
 					var segment_length = p1.distance_to(p2)
 					if segment_length > 1e-12:
@@ -146,7 +154,9 @@ func _on_file_dialog_files_selected(paths):
 						if !same_as_first:
 							lines.append(Draw3d.line(points[i].position, points[first_point].position, Color.FUCHSIA))
 							smallest_segment_length = min(smallest_segment_length, points[i].position.distance_to(points[first_point].position))
-					
+			
+			wires_counter += 1		
+			
 		$Control/TextEdit.visible = false
 		
 		_resize_points()
