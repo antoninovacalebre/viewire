@@ -36,7 +36,7 @@ offset_right = 171.0
 offset_bottom = 289.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "viewire 0.2.6
+text = "viewire 0.3.0
 Antonino Vacalebre - EMCLab
 vacalebre.antonino@spes.uniud.it
 
@@ -45,28 +45,14 @@ CTRL+O - Open File(s)
 CTRL+R - Reload All Files
 CTRL+K - Close All Files
 H - Toggle Help
+B - Cycle Background Color
 
 --- CAMERA ---
 Left Mouse Button - Rotate Camera
 Right Mouse Button - Pan Camera
 Middle Mouse Button - Zoom Camera
 R - Reset Camera View"
-placeholder_text = "CONTROLS:
-
-CTRL+O - Open File
-CTRL+R - Clear View
-H - Toggle Help
-
-CAMERA CONTROLS:
-
-Mouse+LMB - Pitch/Yaw
-W - Forward
-S - Backward
-A - Left
-D - Right
-Z - Roll+
-X - Roll-
-R - Reset Camera View"
+placeholder_text = "viewire"
 editable = false
 context_menu_enabled = false
 shortcut_keys_enabled = false

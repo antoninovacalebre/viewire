@@ -8,6 +8,8 @@ var current_paths:Array
 var mouse_line: MeshInstance3D
 
 var colors:Array
+var background_colors:Array
+var bkg_idx := -1
 
 var files_counter := 0
 var wires_counter := 0
@@ -19,6 +21,7 @@ var smallest_segment_length := INF
 
 func _ready() -> void:
 	reloading = false
+	
 	# color cycle is shamelessly copied from matplotlib
 	# https://matplotlib.org/stable/users/prev_whats_new/dflt_style_changes.html
 	colors.append(Color.hex(0x1f77b4ff))
@@ -32,6 +35,11 @@ func _ready() -> void:
 	colors.append(Color.hex(0xbcbd22ff))
 	colors.append(Color.hex(0x17becfff))
 	
+	background_colors.append(Color.hex(0x4d4d4dff))
+	background_colors.append(Color.hex(0xffffffff))
+	
+	_cycle_background_color()
+	
 func _input(event: InputEvent) -> void:
 	
 	if event.is_action_pressed("Clear"):
@@ -39,6 +47,9 @@ func _input(event: InputEvent) -> void:
 		
 	if event.is_action_pressed("Open File"):
 		_popup_file_dialog()
+		
+	if event.is_action_pressed("Cycle Background Color"):
+		_cycle_background_color()
 		
 	if event.is_action_pressed("Toggle Help"):
 		$Control/TextEdit.visible = not $Control/TextEdit.visible
@@ -64,7 +75,12 @@ func _clear_points_and_lines()->void:
 	files_counter = 0
 	wires_counter = 0
 	current_paths.clear()
-	
+
+func _cycle_background_color() -> void:
+	bkg_idx = (bkg_idx + 1) % len(background_colors)
+	RenderingServer.set_default_clear_color(background_colors[bkg_idx])
+	for point in points:
+		point.mesh.material.albedo_color = background_colors[bkg_idx].inverted()
 	
 func _popup_file_dialog() -> void:
 	$FileDialog.popup()
@@ -128,7 +144,7 @@ func _on_file_dialog_files_selected(paths):
 				line = line.split(" ", false)
 				
 				var pv3 = Vector3(float(line[0]), float(line[1]), float(line[2]))
-				points.append(Draw3d.point(pv3, default_point_size))
+				points.append(Draw3d.point(pv3, default_point_size, background_colors[bkg_idx].inverted()))
 				
 				if ii > 0:
 					var p1 = points[i].position
