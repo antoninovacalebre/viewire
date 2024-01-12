@@ -36,7 +36,7 @@ offset_right = 171.0
 offset_bottom = 289.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "viewire 0.3.0
+text = "viewire 0.3.1
 Antonino Vacalebre - EMCLab
 vacalebre.antonino@spes.uniud.it
 
@@ -50,7 +50,7 @@ B - Cycle Background Color
 --- CAMERA ---
 Left Mouse Button - Rotate Camera
 Right Mouse Button - Pan Camera
-Middle Mouse Button - Zoom Camera
+Middle Mouse Button/LSHIFT - Zoom Camera
 R - Reset Camera View"
 placeholder_text = "viewire"
 editable = false
